@@ -1,0 +1,100 @@
+import java.util.Scanner;
+
+class ContaCorrente extends Conta {
+    private double limiteChequeEspecial = 2000.0;
+
+    public ContaCorrente(String numeroConta, String titularConta, double limiteChequeEspecial, int idade) {
+        super(numeroConta, titularConta, idade);
+        this.limiteChequeEspecial = limiteChequeEspecial;
+    }
+
+    public double getLimiteChequeEspecial() {
+        return limiteChequeEspecial;
+    }
+
+    @Override
+    public void calcularSaldo() {
+
+        double taxas = 0.05 * getSaldo();
+        setSaldo(getSaldo() - taxas + limiteChequeEspecial);
+    }
+
+    @Override
+    public void sacar(double valor) {
+        if (valor > 0) {
+            double saldoAtual = getSaldo();
+            if (valor <= saldoAtual) {
+                setSaldo(saldoAtual - valor);
+                System.out.println("Saque de R$" + valor + " realizado com sucesso.");
+            } else if (saldoAtual < valor) {
+
+                System.out.println("Valor de saque inválido.");
+            }
+        }
+    }
+
+    @Override
+    public void depositar(double valorDeposito) {
+        if (valorDeposito > 0) {
+            double saldoAnterior = getSaldo();
+            double limiteAnterior = getLimiteChequeEspecial();
+
+            if (saldoAnterior < 0) {
+                // Cobrar juros do cheque especial se o saldo anterior for negativo
+                double jurosChequeEspecial = Math.min(-saldoAnterior, valorDeposito) * 0.08;
+                saldoAnterior += valorDeposito - jurosChequeEspecial;
+                limiteAnterior -= jurosChequeEspecial;
+            } else {
+                // Cobrar juros no depósito normal de 8%
+                double jurosDeposito = valorDeposito * 0.08;
+                saldoAnterior += valorDeposito - jurosDeposito;
+            }
+
+            setSaldo(saldoAnterior);
+            setLimiteChequeEspecial(limiteAnterior);
+            System.out.println("Depósito realizado com sucesso.");
+            System.out.println("Saldo após depósito: " + getSaldo());
+            System.out.println("Limite do Cheque Especial após depósito: " + getLimiteChequeEspecial());
+        } else {
+            System.out.println("Valor de depósito inválido.");
+        }
+    }
+
+     public void setLimiteChequeEspecial(double novoLimiteChequeEspecial) {
+        limiteChequeEspecial = novoLimiteChequeEspecial;
+    }
+
+    @Override
+    public double consultarSaldo() {
+        return getSaldo();
+    }
+
+    @Override
+    public String toString() {
+        System.out.println("*****************************************");
+        return "Conta Corrente {\nNúmero: " + getNumeroConta() + " \nTitular: " + getTitularConta() + "\nSaldo: "
+                + getSaldo() + "\nIdade" + getIdade() + " }" + "\n*****************************************";
+    }
+
+    public void depositarComJuros(int dias, double valorCheque) {
+        if (valorCheque > 0) {
+            double saldoAnterior = getSaldo();
+
+            if (saldoAnterior < 0) {
+                double taxaJurosMensal = 0.08;
+                double taxaJurosDiaria = taxaJurosMensal / 20;
+                double juros = valorCheque * dias * taxaJurosDiaria;
+                saldoAnterior += valorCheque - juros;
+            } else {
+                saldoAnterior += valorCheque;
+            }
+
+            setSaldo(saldoAnterior);
+            System.out.println("Depósito realizado com sucesso.");
+            System.out.println("Saldo após depósito: " + getSaldo());
+        } else {
+            System.out.println("Valor de depósito inválido.");
+        }
+    }
+
+}

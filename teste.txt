@@ -1,0 +1,163 @@
+import java.util.Scanner;
+import java.util.Random;
+
+public class TestaBanco2 {
+
+    public static void main(String[] args) {
+        Random gerador = new Random();
+        Scanner skycener = new Scanner(System.in);
+        Banco banco = new Banco();
+
+        while (true) {
+            System.out.println("** Bem Vindo(a) ao Banco");
+            System.out.println("¨¨ Menu Inicial ¨¨");
+            System.out.println("1-Cadastrar Cliente");
+            System.out.println("2-Sair do Programa");
+
+            int respIni = skycener.nextInt();
+
+            if (respIni == 1) {
+                int numeroAleatorio = gerador.nextInt(10000);
+                System.out.print("\nDigite o nome do cliente: ");
+                String nomeCliente = skycener.next();
+                System.out.print("Digite a idade do cliente: ");
+                int idadeCliente = skycener.nextInt();
+                System.out.println("Seu ID cliente é: " + numeroAleatorio);
+                Cliente novoCliente = new Cliente(nomeCliente, idadeCliente, numeroAleatorio);
+                banco.cadastrarCliente(novoCliente);
+            } else if (respIni == 2) {
+                System.out.println("\nSaindo do programa.");
+                break; // Exit the program
+            } else {
+                System.out.println("Opção inválida. Por favor, escolha uma opção válida.");
+            }
+            
+            while (true) {
+                menu();
+                int escolha = skycener.nextInt();
+
+                switch (escolha) {
+                    case 1:
+                        System.out.print("\nDigite o número da conta: ");
+                        String numeroConta = skycener.next();
+                        System.out.print("Digite o nome do titular da conta: ");
+                        String titularConta = skycener.next();
+                        System.out.print("\nTipo da conta \n1 - Conta Corrente, \n2 - Conta Poupança: ");
+                        int typeAcc = skycener.nextInt();
+
+                        if (typeAcc == 1) {
+                            double limiteChequeEspecial = 2000;
+                            System.out.print("\nLimite do Cheque Especial: " + limiteChequeEspecial);
+                            Conta contaCorrente = new ContaCorrente(numeroConta, titularConta, limiteChequeEspecial);
+                            banco.cadastrarConta(contaCorrente);
+                            System.out.println("\nConta cadastrada com sucesso.");
+                        } else if (typeAcc == 2) {
+                            System.out.print("Taxa de Rendimento: ");
+                            double taxaRendimento = skycener.nextDouble();
+                            Conta contaPoupanca = new ContaPoupanca(numeroConta, titularConta, taxaRendimento);
+                            banco.cadastrarConta(contaPoupanca);
+                            System.out.println("\nConta cadastrada com sucesso.");
+                        } else {
+                            System.out.println("\nOpção inválida. Conta não cadastrada.");
+                        }
+                        break;
+                    case 2:
+                        System.out.print("\nDigite o nome do cliente: ");
+                        String nomeCliente = skycener.next();
+                        System.out.print("Digite a idade do cliente: ");
+                        int idadeCliente = skycener.nextInt();
+                        Cliente novoCliente = new Cliente(nomeCliente, idadeCliente, 0);
+                        banco.cadastrarCliente(novoCliente);
+                        break;
+                    case 3:
+                        System.out.print("\nNúmero da conta: ");
+                        String numeroAccdep = skycener.next();
+                        System.out.print("Valor a depositar: ");
+                        double valorDeposito = skycener.nextDouble();
+                        Conta accDep = banco.encontrarConta(numeroAccdep);
+                        if (accDep != null) {
+                            accDep.depositar(valorDeposito);
+                            System.out.println("Depósito realizado com sucesso.");
+                        } else {
+                            System.out.println("\nConta não encontrada.");
+                        }
+                        break;
+                    case 4:
+                        System.out.print("\nNúmero da conta: ");
+                        String numeroContaSaque = skycener.next();
+                        System.out.print("Valor a sacar: ");
+                        double valorSaque = skycener.nextDouble();
+                        Conta contaSaque = banco.encontrarConta(numeroContaSaque);
+                        if (contaSaque != null) {
+                            contaSaque.sacar(valorSaque);
+                        } else {
+                            System.out.println("\nConta não encontrada.");
+                        }
+                        break;
+                    case 5:
+                        System.out.print("\nNúmero da conta de origem: ");
+                        String contaOrigem = skycener.next();
+                        System.out.print("Número da conta de destino: ");
+                        String contaDestino = skycener.next();
+                        System.out.print("Valor a transferir: ");
+                        double valorTransferencia = skycener.nextDouble();
+                        banco.transferencia(contaOrigem, contaDestino, valorTransferencia);
+                        break;
+                    case 6:
+                        System.out.print("\nNúmero da conta: ");
+                        String numeroContaSaldo = skycener.next();
+                        Conta contaSaldo = banco.encontrarConta(numeroContaSaldo);
+                        if (contaSaldo != null) {
+                            double saldo = contaSaldo.consultarSaldo();
+                            System.out.println("\nSaldo da conta: " + saldo);
+                        } else {
+                            System.out.println("Conta não encontrada.");
+                        }
+                        break;
+                    case 7:
+                        banco.listarContas();
+                        break;
+                    case 8:
+                        banco.listarClientes();
+                        break;
+                    case 9:
+                        System.out.print("\nNúmero da conta: ");
+                        String numeroCONTA = skycener.next();
+                        System.out.println("Quantos dias você quer usar o Cheque Especial?");
+                        int diasC = skycener.nextInt();
+                        System.out.println("Qual o Valor do Cheque?");
+                        double valorCheque = skycener.nextDouble();
+                        Conta contaSaldoC = banco.encontrarConta(numeroCONTA);
+                        banco.calcularChequeEspecial(diasC, valorCheque);
+                        break;
+                    case 0:
+                        System.out.println("\nSaindo do programa.");
+                        break;
+                    default:
+                        System.out.println("\nOpção inválida. Por favor, escolha uma opção válida.");
+                }
+
+                if (escolha == 0) {
+                    break;
+                }
+            }
+        }
+
+        skycener.close();
+    }
+
+    public static void menu() {
+        System.out.println("\n\t==== MENU SKYCER BANK ====\n");
+        System.out.println("1. Cadastrar conta");
+        System.out.println("2. Cadastrar novo cliente");
+        System.out.println("3. Depositar");
+        System.out.println("4. Sacar");
+        System.out.println("5. Transferir");
+        System.out.println("6. Consultar saldo");
+        System.out.println("7. Listar contas");
+        System.out.println("8. Listar clientes");
+        System.out.println("9. Usar Cheque Especial");
+        System.out.println("0. Sair do programa");
+        System.out.print("\nEscolha uma opção: ");
+    }
+}
